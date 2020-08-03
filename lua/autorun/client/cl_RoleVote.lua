@@ -22,12 +22,16 @@ net.Receive("RoleVote_open", function(len, ply)
     grid:Dock(TOP)
     grid:SetColWide(100)
     grid:SetCols((frame:GetWide() - 10) / grid:GetColWide())
-
     -- Bugreport Button
-    -- local rBut = vgui.Create("DButton", frame)
-    -- rBut:SetText("Report Bug")
-    -- rBut:SetSize(60, 17)
-    -- rBut:SetPos(352, 4)
+    local rBut = vgui.Create("DButton", frame)
+    rBut:SetText("Report Bug")
+    rBut:SetSize(60, 17)
+    rBut:SetPos(352, 4)
+
+    rBut.DoClick = function()
+        gui.OpenURL("https://github.com/Blaubeeree/ttt2-rolevote/issues/new")
+    end
+
     -- Buttons
     for _, role in pairs(net.ReadTable()) do
         local but = vgui.Create("DButton")
