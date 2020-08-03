@@ -8,7 +8,6 @@ util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
-local mapChange = RealTime() > 2 -- checks if the map was changed or the server restarted
 local votes = {}
 
 local function EnoughPlayers()
@@ -61,7 +60,6 @@ local function PrepTimerFinished()
     if EnoughPlayers() then
         hook.Remove("TTTPrepareRound", "RoleVote_TTTPrepareRound")
         if not GetConVar("rolevote_enabled"):GetBool() then return end
-        mapChange = false
         EndVote()
     else
         timer.Adjust("RoleVote_PrepTimer", GetConVar("ttt_preptime_seconds"):GetInt(), 1, PrepTimerFinished)
@@ -71,7 +69,7 @@ end
 
 -- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
 hook.Add("Initialize", "RoleVote_Initialize", function()
-    if not TTT2 or not mapChange then return end
+    if not TTT2 then return end
     timer.Create("RoleVote_PrepTimer", GetConVar("ttt_firstpreptime"):GetInt(), 1, PrepTimerFinished)
     timer.Stop("RoleVote_PrepTimer")
 
@@ -81,7 +79,7 @@ hook.Add("Initialize", "RoleVote_Initialize", function()
 end)
 
 net.Receive("RoleVote_client_ready", function(len, ply)
-    if not mapChange or not GetConVar("rolevote_enabled"):GetBool() or GetConVar("rolevote_min_players"):GetInt() > #player.GetAll() then return end
+    if not GetConVar("rolevote_enabled"):GetBool() or GetConVar("rolevote_min_players"):GetInt() > #player.GetAll() then return end
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
