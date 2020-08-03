@@ -1,7 +1,7 @@
 CreateConVar("rolevote_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable/Disable RoleVote")
-CreateConVar("rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players, that has to be online for RoleVote being aktive", 1)
-CreateConVar("rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "1: The players vote the roles, that get banned; 0: The players vote the roles, that get aktivated")
-CreateConVar("rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/aktivated", 1)
+CreateConVar("rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1)
+CreateConVar("rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The players vote the roles that get activated 1: The players vote the roles that get banned")
+CreateConVar("rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1)
 
 util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_client_ready")
