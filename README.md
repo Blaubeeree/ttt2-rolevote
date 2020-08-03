@@ -1,5 +1,6 @@
 # [TTT2] RoleVote
-RoleVote is a addon for [TTT2](https://github.com/TTT-2/TTT2) that lets the players vote after a mapchange which the roles they want to aktivate/deaktivate.
+RoleVote is a addon for [TTT2](https://github.com/TTT-2/TTT2) that lets the players vote after a mapchange which the roles they want to aktivate/deaktivate.<br>
+This addon is still in beta, if you find bugs or have ideas what i can improve tell me them [here](https://github.com/Blaubeeree/ttt2-rolevote/issues/new).
 ## Convars
 ```
 - rolevote_enabled      Enable/Disable RoleVote
