@@ -16,7 +16,13 @@ net.Receive("RoleVote_open", function(len, ply)
     local label = vgui.Create("DLabel", frame)
     label:Dock(TOP)
     label:SetFont("DermaDefaultBold")
-    label:SetText("Vote for a role that will be deactivated until the next map change:")
+
+    if net.ReadBool() then
+        label:SetText("Vote for a role that will be deactivated until the next map change:")
+    else
+        label:SetText("Vote for a role that will be activated until the next map change:")
+    end
+
     -- Grid
     local grid = vgui.Create("DGrid", frame)
     grid:Dock(TOP)

@@ -1,7 +1,7 @@
-CreateConVar("rolevote_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable/Disable RoleVote")
-CreateConVar("rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1)
-CreateConVar("rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The players vote the roles that get activated 1: The players vote the roles that get banned")
-CreateConVar("rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1)
+local enabled = CreateConVar("rolevote_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable/Disable RoleVote"):GetBool()
+local minPlayers = CreateConVar("rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1):GetInt()
+local voteban = CreateConVar("rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The players vote the roles that get activated 1: The players vote the roles that get banned"):GetBool()
+local count = CreateConVar("rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1):GetInt()
 
 util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_client_ready")
@@ -20,7 +20,7 @@ local function EnoughPlayers()
         ready = ready + 1
     end
 
-    return ready >= GetConVar("ttt_minimum_players"):GetInt()
+    return ready >= minPlayers
 end
 
 local function EndVote()
@@ -40,7 +40,7 @@ local function EndVote()
 
     local winners = {}
 
-    for i = 1, GetConVar("rolevote_count"):GetInt() do
+    for i = 1, count do
         local r = GetWinningKey(votes)
         if votes[r] == nil or #votes[r] <= 0 then continue end
         table.insert(winners, string.lower(r))
@@ -48,7 +48,7 @@ local function EndVote()
     end
 
     hook.Add("TTT2RoleNotSelectable", "RoleVote_TTT2RoleNotSelectable", function(r)
-        if GetConVar("rolevote_voteban"):GetBool() then
+        if voteban then
             return table.KeyFromValue(winners, r.name) ~= nil or nil
         else
             return table.KeyFromValue(winners, r.name) == nil or nil
@@ -59,7 +59,7 @@ end
 local function PrepTimerFinished()
     if EnoughPlayers() then
         hook.Remove("TTTPrepareRound", "RoleVote_TTTPrepareRound")
-        if not GetConVar("rolevote_enabled"):GetBool() then return end
+        if not enabled then return end
         EndVote()
     else
         timer.Adjust("RoleVote_PrepTimer", GetConVar("ttt_preptime_seconds"):GetInt(), 1, PrepTimerFinished)
@@ -79,7 +79,7 @@ hook.Add("Initialize", "RoleVote_Initialize", function()
 end)
 
 net.Receive("RoleVote_client_ready", function(len, ply)
-    if not GetConVar("rolevote_enabled"):GetBool() or GetConVar("rolevote_min_players"):GetInt() > #player.GetAll() then return end
+    if not enabled or minPlayers > #player.GetAll() then return end
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
@@ -94,6 +94,7 @@ net.Receive("RoleVote_client_ready", function(len, ply)
     end
 
     net.Start("RoleVote_open")
+    net.WriteBit(voteban)
     net.WriteTable(roles)
     net.Broadcast()
     net.Start("RoleVote_refresh_buttons")
