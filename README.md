@@ -9,5 +9,6 @@ This addon is still in beta, if you find bugs or have ideas what I can improve t
 - rolevote_voteban       0: The players vote the roles that get activated
                          1: The players vote the roles that get banned (Default)
 - rolevote_count         Sets how many roles will be banned/activated (Default: 1)
-- rolevote_role_cooldown Sets how many times a role can't be voted on after it has won a vote (Default: 1)
+- rolevote_role_cooldown Sets how many times a role can't be voted on after it has won a vote
+                         (Default: 1)
 ```
