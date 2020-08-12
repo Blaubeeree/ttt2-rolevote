@@ -2,12 +2,22 @@ local enabled = CreateConVar("rolevote_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY
 local minPlayers = CreateConVar("rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1):GetInt()
 local voteban = CreateConVar("rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The players vote the roles that get activated 1: The players vote the roles that get banned"):GetBool()
 local count = CreateConVar("rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1):GetInt()
+local role_cooldown = CreateConVar("rolevote_role_cooldown", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many times a role can't be voted on after it has won a vote.", 0):GetInt()
 
 util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
+
+if not sql.TableExists("rolevote") then
+    sql.Query("CREATE TABLE rolevote(roles TEXT)")
+end
+local cd = {}
+for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
+    table.Add(cd, util.JSONToTable(v.roles))
+end
+
 local votes = {}
 
 local function EnoughPlayers()
@@ -47,6 +57,13 @@ local function EndVote()
         votes[r] = nil
     end
 
+    if #winners <= 0 then return end
+    sql.Query("INSERT INTO rolevote(roles) VALUES('" .. util.TableToJSON(winners) .. "')")
+
+    while (tonumber(sql.Query("SELECT COUNT(*) FROM rolevote")[1]["COUNT(*)"]) > role_cooldown) do
+        sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
+    end
+
     hook.Add("TTT2RoleNotSelectable", "RoleVote_TTT2RoleNotSelectable", function(r)
         if voteban then
             return table.KeyFromValue(winners, r.name) ~= nil or nil
@@ -83,7 +100,7 @@ net.Receive("RoleVote_client_ready", function(len, ply)
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
-        if role:IsSelectable(false) and role ~= INNOCENT and role ~= TRAITOR then
+        if table.KeyFromValue(cd, role.name) == nil and role:IsSelectable(false) and role ~= INNOCENT and role ~= TRAITOR then
             local roleData = {
                 name = string.SetChar(role.name, 1, string.upper(role.name[1])),
                 color = role.color
