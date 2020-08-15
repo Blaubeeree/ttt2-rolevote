@@ -19,6 +19,7 @@ for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
 end
 
 local votes = {}
+local winners = {}
 
 local function EnoughPlayers()
     local ready = 0
@@ -47,8 +48,6 @@ local function EndVote()
 
         return winner
     end
-
-    local winners = {}
 
     for i = 1, count do
         local r = GetWinningKey(votes)
@@ -136,7 +135,7 @@ net.Receive("RoleVote_vote", function(len, ply)
     net.Broadcast()
 end)
 
-concommand.Add("getRoles", function(ply)
+concommand.Add("printRoles", function(ply)
     local function addRoles(aktive, tbl)
         tbl = tbl or {}
         local i = 0
@@ -163,6 +162,26 @@ concommand.Add("getRoles", function(ply)
     end
 
     local msg = {}
+
+    if #winners ~= 0 then
+        table.insert(msg, Color(255, 255, 255))
+        table.insert(msg, "Last Vote Winner: \n")
+        for i = 1, #winners, 1 do
+            table.insert(msg, GetRoleByName(winners[i]).color)
+            table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])) .. " \t")
+
+            if string.len(winners[i]) < 7 then
+                table.insert(msg, "\t")
+            end
+
+            if i % 5 == 0 then
+                table.insert(msg, "\n")
+            end
+        end
+
+        table.insert(msg, "\n\n")
+    end
+
     table.insert(msg, Color(255, 255, 255))
     table.insert(msg, "Aktive Roles: \n")
     addRoles(true, msg)
