@@ -10,16 +10,19 @@ util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
 
-if not sql.TableExists("rolevote") then
-    sql.Query("CREATE TABLE rolevote(roles TEXT)")
-end
-local cd = {}
-for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
-    table.Add(cd, util.JSONToTable(v.roles))
-end
-
 local votes = {}
 local winners = {}
+local cd = {}
+local voteEnded = false
+
+if not sql.TableExists("rolevote") then
+    sql.Query("CREATE TABLE rolevote(roles TEXT NOT NULL PRIMARY KEY)")
+end
+if sql.Query("SELECT * FROM rolevote") ~= nil then
+    for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
+        table.Add(cd, util.JSONToTable(v.roles))
+    end
+end
 
 local function EnoughPlayers()
     local ready = 0
@@ -49,6 +52,8 @@ local function EndVote()
         return winner
     end
 
+    voteEnded = true
+
     for i = 1, count do
         local r = GetWinningKey(votes)
         if votes[r] == nil or #votes[r] <= 0 then continue end
@@ -75,7 +80,7 @@ end
 local function PrepTimerFinished()
     if EnoughPlayers() then
         hook.Remove("TTTPrepareRound", "RoleVote_TTTPrepareRound")
-        if not enabled then return end
+        if not enabled or minPlayers > #player.GetAll() then return end
         EndVote()
     else
         timer.Adjust("RoleVote_PrepTimer", GetConVar("ttt_preptime_seconds"):GetInt(), 1, PrepTimerFinished)
@@ -95,7 +100,7 @@ hook.Add("Initialize", "RoleVote_Initialize", function()
 end)
 
 net.Receive("RoleVote_client_ready", function(len, ply)
-    if not enabled or minPlayers > #player.GetAll() then return end
+    if not enabled or minPlayers > #player.GetAll() or voteEnded then return end
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
