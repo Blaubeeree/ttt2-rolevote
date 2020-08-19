@@ -35,7 +35,7 @@ net.Receive("RoleVote_open", function(len, ply)
     rBut:SetPos(352, 4)
 
     rBut.DoClick = function()
-        gui.OpenURL("https://github.com/Blaubeeree/ttt2-rolevote/issues/new")
+        gui.OpenURL("https://github.com/Blaubeeree/ttt2-rolevote/issues")
     end
 
     -- Buttons
@@ -58,13 +58,6 @@ net.Receive("RoleVote_open", function(len, ply)
         end
 
         function but:DoClick()
-            -- reset fonts
-            for _, b in pairs(buttons) do
-                b:SetFont("DermaDefault")
-            end
-
-            -- set pressed button font
-            self:SetFont("DermaDefaultBold")
             -- tell server the new vote
             net.Start("RoleVote_vote")
             net.WriteString(self:GetName())
@@ -79,9 +72,18 @@ end)
 net.Receive("RoleVote_refresh_buttons", function()
     local votes = net.ReadTable()
 
+    -- reset fonts
+    for _, b in pairs(buttons) do
+        b:SetFont("DermaDefault")
+    end
+
     for role, plys in pairs(votes) do
         if ispanel(buttons[role]) then
             buttons[role]:SetText(#plys .. " " .. buttons[role]:GetName())
+
+            if table.KeyFromValue(plys, LocalPlayer():SteamID64()) ~= nil then
+                buttons[role]:SetFont("DermaDefaultBold")
+            end
         end
     end
 end)
@@ -90,7 +92,7 @@ net.Receive("RoleVote_msg", function()
     MsgC(unpack(net.ReadTable()))
 end)
 
-hook.Add("InitPostEntity", "RoleVote_InitPostEntity", function()
+hook.Add("InitPostEntity", "TTTRolevoteInitPostEntity", function()
     if not TTT2 then return end
     AddTTT2AddonDev("76561198329270449")
 
@@ -104,7 +106,7 @@ hook.Add("InitPostEntity", "RoleVote_InitPostEntity", function()
     net.SendToServer()
 end)
 
-hook.Add("TTTBeginRound", "RoleVote_TTTBeginRound", function()
+hook.Add("TTTBeginRound", "TTTRolevoteBeginRound", function()
     if ispanel(frame) then
         frame:SetVisible(false)
         frame:Remove()

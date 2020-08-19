@@ -9,7 +9,6 @@ util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
-
 local votes = {}
 local winners = {}
 local cd = {}
@@ -18,6 +17,7 @@ local voteEnded = false
 if not sql.TableExists("rolevote") then
     sql.Query("CREATE TABLE rolevote(roles TEXT NOT NULL PRIMARY KEY)")
 end
+
 if sql.Query("SELECT * FROM rolevote") ~= nil then
     for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
         table.Add(cd, util.JSONToTable(v.roles))
@@ -61,14 +61,13 @@ local function EndVote()
         votes[r] = nil
     end
 
-    if #winners <= 0 then return end
     sql.Query("INSERT INTO rolevote(roles) VALUES('" .. util.TableToJSON(winners) .. "')")
 
     while (tonumber(sql.Query("SELECT COUNT(*) FROM rolevote")[1]["COUNT(*)"]) > role_cooldown) do
         sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
     end
 
-    hook.Add("TTT2RoleNotSelectable", "RoleVote_TTT2RoleNotSelectable", function(r)
+    hook.Add("TTT2RoleNotSelectable", "TTTRolevoteDisableRoles", function(r)
         if voteban then
             return table.KeyFromValue(winners, r.name) ~= nil or nil
         else
@@ -79,7 +78,7 @@ end
 
 local function PrepTimerFinished()
     if EnoughPlayers() then
-        hook.Remove("TTTPrepareRound", "RoleVote_TTTPrepareRound")
+        hook.Remove("TTTPrepareRound", "TTTRolevotePrepareRound")
         if not enabled or minPlayers > #player.GetAll() then return end
         EndVote()
     else
@@ -89,12 +88,12 @@ local function PrepTimerFinished()
 end
 
 -- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
-hook.Add("Initialize", "RoleVote_Initialize", function()
+hook.Add("Initialize", "TTTRolevoteInitialize", function()
     if not TTT2 then return end
     timer.Create("RoleVote_PrepTimer", GetConVar("ttt_firstpreptime"):GetInt(), 1, PrepTimerFinished)
     timer.Stop("RoleVote_PrepTimer")
 
-    hook.Add("TTTPrepareRound", "RoleVote_TTTPrepareRound", function()
+    hook.Add("TTTPrepareRound", "TTTRolevotePrepareRound", function()
         timer.Start("RoleVote_PrepTimer")
     end)
 end)
@@ -115,7 +114,7 @@ net.Receive("RoleVote_client_ready", function(len, ply)
     end
 
     net.Start("RoleVote_open")
-    net.WriteBit(voteban)
+    net.WriteBool(voteban)
     net.WriteTable(roles)
     net.Broadcast()
     net.Start("RoleVote_refresh_buttons")
@@ -126,15 +125,17 @@ end)
 net.Receive("RoleVote_vote", function(len, ply)
     local role = net.ReadString()
     votes[role] = votes[role] or {}
+    -- if same role clicked again remove vote
+    local removeVote = table.KeyFromValue(votes[role], ply:SteamID64()) ~= nil
 
-    -- remove old vote
     for _, plys in pairs(votes) do
         table.RemoveByValue(plys, ply:SteamID64())
     end
 
-    -- add new vote
-    table.insert(votes[role], ply:SteamID64())
-    -- refresh vgui
+    if not removeVote then
+        table.insert(votes[role], ply:SteamID64())
+    end
+
     net.Start("RoleVote_refresh_buttons")
     net.WriteTable(votes)
     net.Broadcast()
@@ -171,7 +172,8 @@ concommand.Add("printRoles", function(ply)
     if #winners ~= 0 then
         table.insert(msg, Color(255, 255, 255))
         table.insert(msg, "Last Vote Winner: \n")
-        for i = 1, #winners, 1 do
+
+        for i = 1, #winners do
             table.insert(msg, GetRoleByName(winners[i]).color)
             table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])) .. " \t")
 
