@@ -8,6 +8,7 @@ util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
+util.AddNetworkString("RoleVote_console")
 local votes = {}
 local winners = {}
 local cd = {}
@@ -95,6 +96,28 @@ hook.Add("Initialize", "TTTRolevoteInitialize", function()
     hook.Add("TTTPrepareRound", "TTTRolevotePrepareRound", function()
         timer.Start("RoleVote_PrepTimer")
     end)
+end)
+
+hook.Add("TTTBeginRound", "TTTRolevoteBeginRound", function()
+    voteEnded = true
+    local msg = {}
+    if #winners <= 0 then return end
+
+    for i = 1, #winners do
+        table.insert(msg, GetRoleByName(winners[i]).color)
+        table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])))
+
+        if i ~= #winners then
+            table.insert(msg, ", ")
+        end
+    end
+
+    table.insert(msg, Color(255, 255, 255))
+    table.insert(msg, " won the vote.")
+    net.Start("RoleVote_msg")
+    net.WriteTable(msg)
+    net.Broadcast()
+    hook.Remove("TTTBeginRound", "TTTRolevoteBeginRound")
 end)
 
 net.Receive("RoleVote_client_ready", function(len, ply)
@@ -198,7 +221,7 @@ concommand.Add("printRoles", function(ply)
         addRoles(false, msg)
     end
 
-    net.Start("RoleVote_msg")
+    net.Start("RoleVote_console")
     net.WriteTable(msg)
     net.Send(ply)
 end)

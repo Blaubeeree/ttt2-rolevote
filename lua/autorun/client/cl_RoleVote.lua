@@ -89,6 +89,10 @@ net.Receive("RoleVote_refresh_buttons", function()
 end)
 
 net.Receive("RoleVote_msg", function()
+   chat.AddText("[RoleVote] ", unpack(net.ReadTable()))
+end)
+
+net.Receive("RoleVote_console", function()
     MsgC(unpack(net.ReadTable()))
 end)
 
