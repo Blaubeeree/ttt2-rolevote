@@ -3,7 +3,7 @@ local voteban = GetConVar("ttt_rolevote_voteban"):GetBool()
 local minPlayers = GetConVar("ttt_rolevote_min_players"):GetInt()
 local count = GetConVar("ttt_rolevote_count"):GetInt()
 local role_cooldown = GetConVar("ttt_rolevote_role_cooldown"):GetInt()
-local always_active = string.Split(GetConVar("ttt_rolevote_always_aktiv"):GetString(), ",")
+local always_active = string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
 
 for key, role in pairs(always_active) do
     always_active[key] = string.Trim(role)
@@ -171,12 +171,12 @@ net.Receive("RoleVote_vote", function(len, ply)
 end)
 
 concommand.Add("printRoles", function(ply)
-    local function addRoles(aktive, tbl)
+    local function addRoles(active, tbl)
         tbl = tbl or {}
         local i = 0
 
         for _, role in pairs(GetRoles()) do
-            if aktive and role:IsSelectable(false) or not aktive and not role:IsSelectable(false) and not role.notSelectable then
+            if active and role:IsSelectable(false) or not active and not role:IsSelectable(false) and not role.notSelectable then
                 i = i + 1
                 table.insert(tbl, role.color)
                 table.insert(tbl, string.SetChar(role.name, 1, string.upper(role.name[1])) .. " \t")
@@ -219,7 +219,7 @@ concommand.Add("printRoles", function(ply)
     end
 
     table.insert(msg, Color(255, 255, 255))
-    table.insert(msg, "Aktive Roles: \n")
+    table.insert(msg, "Active Roles: \n")
     addRoles(true, msg)
 
     if addRoles(false) > 0 then
