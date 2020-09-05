@@ -3,7 +3,7 @@ CreateConVar("ttt_rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The p
 CreateConVar("ttt_rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1):GetInt()
 CreateConVar("ttt_rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1):GetInt()
 CreateConVar("ttt_rolevote_role_cooldown", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many times a role can't be voted on after it has won a vote.", 0):GetInt()
-CreateConVar("ttt_rolevote_always_aktiv", "", {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Always activated roles (separated by ,)"):GetString()
+CreateConVar("ttt_rolevote_always_active", "", {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Always activated roles (separated by ,)"):GetString()
 
 hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
     ULib.replicatedWritableCvar("ttt_rolevote_enabled", "rep_ttt_rolevote_enabled", GetConVar("ttt_rolevote_enabled"):GetBool(), true, false, name)
@@ -11,7 +11,7 @@ hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
     ULib.replicatedWritableCvar("ttt_rolevote_min_players", "rep_ttt_rolevote_min_players", GetConVar("ttt_rolevote_min_players"):GetInt(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_count", "rep_ttt_rolevote_count", GetConVar("ttt_rolevote_count"):GetInt(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_role_cooldown", "rep_ttt_rolevote_role_cooldown", GetConVar("ttt_rolevote_role_cooldown"):GetInt(), true, false, name)
-    ULib.replicatedWritableCvar("ttt_rolevote_always_aktiv", "rep_ttt_rolevote_always_aktiv", GetConVar("ttt_rolevote_always_aktiv"):GetString(), true, false, name)
+    ULib.replicatedWritableCvar("ttt_rolevote_always_active", "rep_ttt_rolevote_always_active", GetConVar("ttt_rolevote_always_active"):GetString(), true, false, name)
 end)
 
 if SERVER then
