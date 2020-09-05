@@ -80,7 +80,7 @@ if CLIENT then
         })
 
         tttrslst:AddItem(xlib.maketextbox{
-            repconvar = "rep_ttt_rolevote_always_aktiv",
+            repconvar = "rep_ttt_rolevote_always_active",
             parent = tttrslst
         })
 

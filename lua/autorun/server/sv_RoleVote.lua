@@ -1,3 +1,5 @@
+local version = "05/09/2020 BETA"
+
 local enabled = GetConVar("ttt_rolevote_enabled"):GetBool()
 local voteban = GetConVar("ttt_rolevote_voteban"):GetBool()
 local minPlayers = GetConVar("ttt_rolevote_min_players"):GetInt()
@@ -168,6 +170,18 @@ net.Receive("RoleVote_vote", function(len, ply)
     net.Start("RoleVote_refresh_buttons")
     net.WriteTable(votes)
     net.Broadcast()
+end)
+
+concommand.Add("rolevote_version", function(ply)
+    local msg = {}
+    table.insert(msg, Color(255, 255, 255))
+    table.insert(msg, "----- RoleVote Addon -----\n")
+    table.insert(msg, "By:      Blaubeeree\n")
+    table.insert(msg, "Version: " .. version .. "\n")
+
+    net.Start("RoleVote_console")
+    net.WriteTable(msg)
+    net.Send(ply)
 end)
 
 concommand.Add("printRoles", function(ply)
