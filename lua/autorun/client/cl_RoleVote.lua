@@ -81,7 +81,7 @@ net.Receive("RoleVote_refresh_buttons", function()
         if ispanel(buttons[role]) then
             buttons[role]:SetText(#plys .. " " .. buttons[role]:GetName())
 
-            if table.KeyFromValue(plys, LocalPlayer():SteamID64()) ~= nil then
+            if table.HasValue(plys, LocalPlayer():SteamID64()) then
                 buttons[role]:SetFont("DermaDefaultBold")
             end
         end

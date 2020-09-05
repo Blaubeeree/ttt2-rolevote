@@ -3,6 +3,12 @@ local voteban = GetConVar("ttt_rolevote_voteban"):GetBool()
 local minPlayers = GetConVar("ttt_rolevote_min_players"):GetInt()
 local count = GetConVar("ttt_rolevote_count"):GetInt()
 local role_cooldown = GetConVar("ttt_rolevote_role_cooldown"):GetInt()
+local always_active = string.Split(GetConVar("ttt_rolevote_always_aktiv"):GetString(), ",")
+
+for key, role in pairs(always_active) do
+    always_active[key] = string.Trim(role)
+end
+
 util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
@@ -69,9 +75,9 @@ local function EndVote()
 
     hook.Add("TTT2RoleNotSelectable", "TTTRolevoteDisableRoles", function(r)
         if voteban then
-            return table.KeyFromValue(winners, r.name) ~= nil or nil
+            return table.HasValue(winners, r.name) or nil
         else
-            return table.KeyFromValue(winners, r.name) == nil or nil
+            return not table.HasValue(winners, r.name) or nil
         end
     end)
 end
@@ -125,14 +131,15 @@ net.Receive("RoleVote_client_ready", function(len, ply)
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
-        if table.KeyFromValue(cd, role.name) == nil and role:IsSelectable(false) and role ~= INNOCENT and role ~= TRAITOR then
-            local roleData = {
-                name = string.SetChar(role.name, 1, string.upper(role.name[1])),
-                color = role.color
-            }
+        if not role:IsSelectable(false) or role == INNOCENT or role == TRAITOR or role == DETECTIVE then continue end
+        if table.HasValue(cd, role.name) or table.HasValue(always_active, role.name) or table.HasValue(always_active, role.abbr) then continue end
 
-            table.insert(roles, roleData)
-        end
+        local roleData = {
+            name = string.SetChar(role.name, 1, string.upper(role.name[1])),
+            color = role.color
+        }
+
+        table.insert(roles, roleData)
     end
 
     net.Start("RoleVote_open")
@@ -148,7 +155,7 @@ net.Receive("RoleVote_vote", function(len, ply)
     local role = net.ReadString()
     votes[role] = votes[role] or {}
     -- if same role clicked again remove vote
-    local removeVote = table.KeyFromValue(votes[role], ply:SteamID64()) ~= nil
+    local removeVote = table.HasValue(votes[role], ply:SteamID64())
 
     for _, plys in pairs(votes) do
         table.RemoveByValue(plys, ply:SteamID64())

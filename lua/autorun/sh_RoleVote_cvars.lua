@@ -3,6 +3,7 @@ CreateConVar("ttt_rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The p
 CreateConVar("ttt_rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1):GetInt()
 CreateConVar("ttt_rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1):GetInt()
 CreateConVar("ttt_rolevote_role_cooldown", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many times a role can't be voted on after it has won a vote.", 0):GetInt()
+CreateConVar("ttt_rolevote_always_aktiv", "", {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Always activated roles (separated by ,)"):GetString()
 
 hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
     ULib.replicatedWritableCvar("ttt_rolevote_enabled", "rep_ttt_rolevote_enabled", GetConVar("ttt_rolevote_enabled"):GetBool(), true, false, name)
@@ -10,6 +11,7 @@ hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
     ULib.replicatedWritableCvar("ttt_rolevote_min_players", "rep_ttt_rolevote_min_players", GetConVar("ttt_rolevote_min_players"):GetInt(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_count", "rep_ttt_rolevote_count", GetConVar("ttt_rolevote_count"):GetInt(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_role_cooldown", "rep_ttt_rolevote_role_cooldown", GetConVar("ttt_rolevote_role_cooldown"):GetInt(), true, false, name)
+    ULib.replicatedWritableCvar("ttt_rolevote_always_aktiv", "rep_ttt_rolevote_always_aktiv", GetConVar("ttt_rolevote_always_aktiv"):GetString(), true, false, name)
 end)
 
 if SERVER then
@@ -25,12 +27,12 @@ if CLIENT then
         }
 
         local tttrsclp = vgui.Create("DCollapsibleCategory", tttrspnl)
-        tttrsclp:SetSize(390, 120)
+        tttrsclp:SetSize(390, 155)
         tttrsclp:SetExpanded(1)
         tttrsclp:SetLabel("RoleVote Settings")
         local tttrslst = vgui.Create("DPanelList", tttrsclp)
         tttrslst:SetPos(5, 25)
-        tttrslst:SetSize(390, 120)
+        tttrslst:SetSize(390, 155)
         tttrslst:SetSpacing(5)
 
         tttrslst:AddItem(xlib.makecheckbox{
@@ -69,6 +71,16 @@ if CLIENT then
             min = 0,
             max = 30,
             decimal = 0,
+            parent = tttrslst
+        })
+
+        tttrslst:AddItem(xlib.makelabel{
+            label = "Always activated roles (separated by ,):",
+            parent = tttrslst
+        })
+
+        tttrslst:AddItem(xlib.maketextbox{
+            repconvar = "rep_ttt_rolevote_always_aktiv",
             parent = tttrslst
         })
 
