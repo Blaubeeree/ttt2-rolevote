@@ -1,6 +1,6 @@
 # [TTT2] RoleVote
 RoleVote is an addon for [TTT2](https://github.com/TTT-2/TTT2) that lets the players vote after a map change which of the roles they want to activate/deactivate.<br>
-This addon is still in beta, if you find bugs or have ideas that I can improve tell me them [here](https://github.com/Blaubeeree/ttt2-rolevote/issues).
+This addon is still in beta, if you find bugs or have ideas what I can improve tell me them [here](https://github.com/Blaubeeree/ttt2-rolevote/issues).
 ## Convars
 ```
 - ttt_rolevote_autostart     Enable/Disable autostart after map change
