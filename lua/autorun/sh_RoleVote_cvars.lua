@@ -1,4 +1,6 @@
-CreateConVar("ttt_rolevote_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable/Disable RoleVote"):GetBool()
+RoleVote = {}
+
+CreateConVar("ttt_rolevote_autostart", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable/Disable autostart after mapchange"):GetBool()
 CreateConVar("ttt_rolevote_voteban", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "0: The players vote the roles that get activated 1: The players vote the roles that get banned"):GetBool()
 CreateConVar("ttt_rolevote_min_players", 7, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets the minimum players that have to be online for RoleVote being active", 1):GetInt()
 CreateConVar("ttt_rolevote_count", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Sets how many roles will be banned/activated", 1):GetInt()
@@ -6,7 +8,7 @@ CreateConVar("ttt_rolevote_role_cooldown", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Se
 CreateConVar("ttt_rolevote_always_active", "", {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Always activated roles (separated by ,)"):GetString()
 
 hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
-    ULib.replicatedWritableCvar("ttt_rolevote_enabled", "rep_ttt_rolevote_enabled", GetConVar("ttt_rolevote_enabled"):GetBool(), true, false, name)
+    ULib.replicatedWritableCvar("ttt_rolevote_autostart", "rep_ttt_rolevote_autostart", GetConVar("ttt_rolevote_autostart"):GetBool(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_voteban", "rep_ttt_rolevote_voteban", GetConVar("ttt_rolevote_voteban"):GetBool(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_min_players", "rep_ttt_rolevote_min_players", GetConVar("ttt_rolevote_min_players"):GetInt(), true, false, name)
     ULib.replicatedWritableCvar("ttt_rolevote_count", "rep_ttt_rolevote_count", GetConVar("ttt_rolevote_count"):GetInt(), true, false, name)
@@ -36,8 +38,8 @@ if CLIENT then
         tttrslst:SetSpacing(5)
 
         tttrslst:AddItem(xlib.makecheckbox{
-            label = "ttt_rolevote_enabled (Def. 1)",
-            repconvar = "rep_ttt_rolevote_enabled",
+            label = "ttt_rolevote_autostart (Def. 1)",
+            repconvar = "rep_ttt_rolevote_autostart",
             parent = tttrslst
         })
 

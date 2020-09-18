@@ -18,9 +18,9 @@ net.Receive("RoleVote_open", function(len, ply)
     label:SetFont("DermaDefaultBold")
 
     if net.ReadBool() then
-        label:SetText("Vote for a role that will be deactivated until the next map change:")
+        label:SetText("Vote for a role that will be deactivated until the next vote:")
     else
-        label:SetText("Vote for a role that will be activated until the next map change:")
+        label:SetText("Vote for a role that will be activated until the next vote:")
     end
 
     -- Grid
@@ -74,14 +74,16 @@ net.Receive("RoleVote_refresh_buttons", function()
 
     -- reset fonts
     for _, b in pairs(buttons) do
-        b:SetFont("DermaDefault")
+        if ispanel(b) then
+            b:SetFont("DermaDefault")
+        end
     end
 
     for role, plys in pairs(votes) do
         if ispanel(buttons[role]) then
             buttons[role]:SetText(#plys .. " " .. buttons[role]:GetName())
 
-            if table.HasValue(plys, LocalPlayer():SteamID64()) then
+            if table.HasValue(plys, LocalPlayer():SteamID64()) and ispanel(buttons[role]) then
                 buttons[role]:SetFont("DermaDefaultBold")
             end
         end
@@ -110,10 +112,11 @@ hook.Add("InitPostEntity", "TTTRolevoteInitPostEntity", function()
     net.SendToServer()
 end)
 
-hook.Add("TTTBeginRound", "TTTRolevoteBeginRound", function()
+net.Receive("RoleVote_close", function()
     if ispanel(frame) then
         frame:SetVisible(false)
         frame:Remove()
         frame = nil
+        buttons = {}
     end
 end)
