@@ -22,6 +22,6 @@ This addon is still in beta, if you find bugs or have ideas that I can improve t
 ## Concommands
 ```
 - rolevote_version           Shows the current version of RoleVote
-- printRoles                 Prints out all installed roles and shows if they are activated and which roles
-                             won the last vote
+- printRoles                 Prints out all installed roles and shows if they are activated
+                             and which roles won the last vote
 ```
