@@ -5,7 +5,7 @@ util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
 util.AddNetworkString("RoleVote_console")
-local version = "18/09/2020 BETA"
+local version = "26/01/2021"
 local always_active
 local cd
 local votes = {}
@@ -73,12 +73,7 @@ function RoleVote:Start(time)
         if not role:IsSelectable(false) or role == INNOCENT or role == TRAITOR or role == DETECTIVE then continue end
         if table.HasValue(cd, role.name) or table.HasValue(always_active, role.name) or table.HasValue(always_active, role.abbr) then continue end
 
-        local roleData = {
-            name = string.SetChar(role.name, 1, string.upper(role.name[1])),
-            color = role.color
-        }
-
-        table.insert(roles, roleData)
+        table.insert(roles, role.index)
     end
 
     net.Start("RoleVote_open")
