@@ -11,7 +11,7 @@ This addon is still in beta, if you find bugs or have ideas what I can improve t
 - rolevote_count             Sets how many roles will be banned/activated (Default: 1)
 - rolevote_role_cooldown     Sets how many times a role can't be voted on after it has won a vote
                              (Default: 1)
-- ttt_rolevote_always_active Always activated roles (separated by ",")
+- ttt_rolevote_always_active Always activated roles (separated by "," i.e.: ttt_rolevote_always_active wrath,jester,beacon)
 ```
 ## Admin Commands
 ```
