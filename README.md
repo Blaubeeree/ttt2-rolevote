@@ -4,7 +4,7 @@ This addon is still in beta, if you find bugs or have ideas what I can improve t
 ## Convars
 ```
 - ttt_rolevote_autostart     Enable/Disable autostart after map change
-- ttt_rolevote_min_players       Sets the minimum players that have to be online for RoleVote being active
+- ttt_rolevote_min_players   Sets the minimum players that have to be online for RoleVote being active
                              (Default: 7)
 - ttt_rolevote_voteban       0: The players vote the roles that get activated
                              1: The players vote the roles that get banned (Default)
