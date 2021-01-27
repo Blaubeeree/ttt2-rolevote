@@ -30,14 +30,12 @@ reloadCD()
 
 local function reloadAlwaysAktive()
     always_active = string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
+    table.Add(always_active, {INNOCENT.name, TRAITOR.name, DETECTIVE.name})
 
     for key, role in pairs(always_active) do
-        always_active[key] = string.Trim(role)
+        always_active[key] = string.lower(string.Trim(role))
     end
 end
-
-reloadAlwaysAktive()
-cvars.AddChangeCallback("ttt_rolevote_always_active", reloadAlwaysAktive)
 
 local function EnoughPlayers()
     local ready = 0
@@ -70,8 +68,11 @@ function RoleVote:Start(time)
     local roles = {}
 
     for _, role in pairs(GetRoles()) do
-        if not role:IsSelectable(false) or role == INNOCENT or role == TRAITOR or role == DETECTIVE then continue end
-        if table.HasValue(cd, role.name) or table.HasValue(always_active, role.name) or table.HasValue(always_active, role.abbr) then continue end
+        if not role:IsSelectable(false) or
+            table.HasValue(cd, role.name) or
+            table.HasValue(always_active, role.name) or
+            table.HasValue(always_active, role.abbr)
+        then continue end
 
         table.insert(roles, role.index)
     end
@@ -141,7 +142,10 @@ function RoleVote:End()
         if GetConVar("ttt_rolevote_voteban"):GetBool() then
             return table.HasValue(winners, r.name) or nil
         else
-            return not table.HasValue(winners, r.name) or nil
+            return not table.HasValue(winners, r.name) and
+                not table.HasValue(always_active, r.name) and
+                not table.HasValue(always_active, r.abbr)
+                or nil
         end
     end)
 end
@@ -172,7 +176,10 @@ end
 
 -- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
 hook.Add("Initialize", "TTTRolevoteInitialize", function()
-    if not TTT2 or not GetConVar("ttt_rolevote_autostart"):GetBool() then return end
+    reloadAlwaysAktive()
+    cvars.AddChangeCallback("ttt_rolevote_always_active", reloadAlwaysAktive)
+
+    if not GetConVar("ttt_rolevote_autostart"):GetBool() then return end
     local firstPrep = true
 
     hook.Add("TTTPrepareRound", "TTTRolevotePrepareRound", function()

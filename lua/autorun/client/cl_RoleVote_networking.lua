@@ -13,6 +13,7 @@ net.Receive("RoleVote_close", function()
 end)
 
 net.Receive("RoleVote_refresh_buttons", function()
+    if not ispanel(RoleVote.vgui) then return end
     RoleVote.vgui:UpdateVotes(net.ReadTable())
 end)
 
