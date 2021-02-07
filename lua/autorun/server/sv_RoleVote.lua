@@ -77,6 +77,17 @@ function RoleVote:Start(time)
         table.insert(roles, role.index)
     end
 
+    if #roles < 1 then
+        ErrorNoHalt("[RoleVote] No roles avalible, canceling vote... (this could be because of every role being disabled or on cooldown)\n")
+
+        RoleVote:Cancel()
+
+        sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
+        reloadCD()
+
+        return
+    end
+
     net.Start("RoleVote_open")
     net.WriteBool(GetConVar("ttt_rolevote_voteban"):GetBool())
     net.WriteTable(roles)
