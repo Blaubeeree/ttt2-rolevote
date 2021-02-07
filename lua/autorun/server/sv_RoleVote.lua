@@ -115,7 +115,7 @@ function RoleVote:End()
     local msg = {}
 
     for i = 1, #winners do
-        table.insert(msg, GetRoleByName(winners[i]).color)
+        table.insert(msg, winners[i] == "none" and Color(0,0,0) or GetRoleByName(winners[i]).color)
         table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])))
 
         if i ~= #winners then
@@ -270,7 +270,7 @@ concommand.Add("printRoles", function(ply)
         table.insert(msg, "Last Vote Winner: \n")
 
         for i = 1, #winners do
-            table.insert(msg, GetRoleByName(winners[i]).color)
+            table.insert(msg, winners[i] == "none" and Color(0,0,0) or GetRoleByName(winners[i]).color)
             table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])) .. " \t")
 
             if string.len(winners[i]) < 7 then
