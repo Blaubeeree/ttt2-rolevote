@@ -7,13 +7,13 @@ util.AddNetworkString("RoleVote_msg")
 util.AddNetworkString("RoleVote_console")
 local version = "26/01/2021"
 local always_active
-local cd
+local cooldown
 local votes = {}
 local winners = {}
 RoleVote.started = false
 
-local function reloadCD()
-    cd = {}
+local function reloadCooldown()
+    cooldown = {}
 
     if not sql.TableExists("rolevote") then
         sql.Query("CREATE TABLE rolevote(roles TEXT NOT NULL PRIMARY KEY)")
@@ -21,12 +21,12 @@ local function reloadCD()
 
     if sql.Query("SELECT * FROM rolevote") ~= nil then
         for _, v in pairs(sql.Query("SELECT * FROM rolevote")) do
-            table.Add(cd, util.JSONToTable(v.roles))
+            table.Add(cooldown, util.JSONToTable(v.roles))
         end
     end
 end
 
-reloadCD()
+reloadCooldown()
 
 local function reloadAlwaysAktive()
     always_active = string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
@@ -69,7 +69,7 @@ function RoleVote:Start(time)
 
     for _, role in pairs(GetRoles()) do
         if not role:IsSelectable(false) or
-            table.HasValue(cd, role.name) or
+            table.HasValue(cooldown, role.name) or
             table.HasValue(always_active, role.name) or
             table.HasValue(always_active, role.abbr)
         then continue end
@@ -83,7 +83,7 @@ function RoleVote:Start(time)
         RoleVote:Cancel()
 
         sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
-        reloadCD()
+        reloadCooldown()
 
         return
     end
@@ -147,7 +147,7 @@ function RoleVote:End()
         sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
     end
 
-    reloadCD()
+    reloadCooldown()
 
     hook.Add("TTT2RoleNotSelectable", "TTTRolevoteDisableRoles", function(r)
         if GetConVar("ttt_rolevote_voteban"):GetBool() then
