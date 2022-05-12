@@ -28,7 +28,7 @@ end
 
 reloadCooldown()
 
-local function reloadAlwaysAktive()
+local function reloadAlwaysActive()
     always_active = string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
     table.Add(always_active, {INNOCENT.name, TRAITOR.name, DETECTIVE.name})
 
@@ -187,8 +187,8 @@ end
 
 -- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
 hook.Add("Initialize", "TTTRolevoteInitialize", function()
-    reloadAlwaysAktive()
-    cvars.AddChangeCallback("ttt_rolevote_always_active", reloadAlwaysAktive)
+    reloadAlwaysActive()
+    cvars.AddChangeCallback("ttt_rolevote_always_active", reloadAlwaysActive)
 
     if not GetConVar("ttt_rolevote_autostart"):GetBool() then return end
     local firstPrep = true
