@@ -1,4 +1,4 @@
-util.AddNetworkString("RoleVote_open")
+﻿util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_close")
 util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
@@ -12,6 +12,7 @@ local votes = {}
 local winners = {}
 RoleVote.started = false
 
+-- local functions --
 local function reloadCooldown()
     cooldown = {}
 
@@ -50,6 +51,27 @@ local function EnoughPlayers()
     return ready >= GetConVar("ttt_minimum_players"):GetInt()
 end
 
+local function GetWinningKey(tbl)
+    local highest = -math.huge
+    local winner = nil
+
+    for k, v in RandomPairs(tbl) do
+        if (#v > highest) then
+            winner = k
+            highest = #v
+        end
+    end
+
+    return winner
+end
+
+local function PrepTimerFinished()
+    if EnoughPlayers() then
+        RoleVote:End()
+    end
+end
+
+-- global functions --
 function RoleVote:Start(time)
     if not RoleVote.started then
         votes = {}
@@ -98,28 +120,14 @@ function RoleVote:Start(time)
 end
 
 function RoleVote:End()
-    local function GetWinningKey(tbl)
-        local highest = -math.huge
-        local winner = nil
-
-        for k, v in RandomPairs(tbl) do
-            if (#v > highest) then
-                winner = k
-                highest = #v
-            end
-        end
-
-        return winner
-    end
-
     RoleVote:Cancel()
     winners = {}
 
     for i = 1, GetConVar("ttt_rolevote_count"):GetInt() do
-        local r = GetWinningKey(votes)
-        if votes[r] == nil or #votes[r] <= 0 then continue end
-        table.insert(winners, string.lower(r))
-        votes[r] = nil
+        local role = GetWinningKey(votes)
+        if votes[role] == nil or #votes[role] <= 0 then continue end
+        table.insert(winners, string.lower(role))
+        votes[role] = nil
     end
 
     if #winners <= 0 then return end
@@ -149,13 +157,13 @@ function RoleVote:End()
 
     reloadCooldown()
 
-    hook.Add("TTT2RoleNotSelectable", "TTTRolevoteDisableRoles", function(r)
+    hook.Add("TTT2RoleNotSelectable", "TTTRolevoteDisableRoles", function(role)
         if GetConVar("ttt_rolevote_voteban"):GetBool() then
-            return table.HasValue(winners, r.name) or nil
+            return table.HasValue(winners, role.name) or nil
         else
-            return not table.HasValue(winners, r.name) and
-                not table.HasValue(always_active, r.name) and
-                not table.HasValue(always_active, r.abbr)
+            return not table.HasValue(winners, role.name) and
+                not table.HasValue(always_active, role.name) and
+                not table.HasValue(always_active, role.abbr)
                 or nil
         end
     end)
@@ -178,14 +186,7 @@ function RoleVote:Cancel()
     net.Broadcast()
 end
 
--- autostart
-local function PrepTimerFinished()
-    if EnoughPlayers() then
-        RoleVote:End()
-    end
-end
-
--- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
+-- hooks --
 hook.Add("Initialize", "TTTRolevoteInitialize", function()
     reloadAlwaysActive()
     cvars.AddChangeCallback("ttt_rolevote_always_active", reloadAlwaysActive)
@@ -193,6 +194,8 @@ hook.Add("Initialize", "TTTRolevoteInitialize", function()
     if not GetConVar("ttt_rolevote_autostart"):GetBool() then return end
     local firstPrep = true
 
+    -- autostart --
+    -- use timer instead of TTTBeginRound hook so that function is called just before the round starts when the roles aren't yet selected
     hook.Add("TTTPrepareRound", "TTTRolevotePrepareRound", function()
         if not firstPrep then
             timer.Create("RoleVote_PrepTimer", GetConVar("ttt_preptime_seconds"):GetInt(), 1, PrepTimerFinished)
@@ -209,7 +212,7 @@ hook.Add("Initialize", "TTTRolevoteInitialize", function()
     end)
 end)
 
--- networking
+-- networking --
 net.Receive("RoleVote_client_ready", function(len, ply)
     if RoleVote.started then
         RoleVote:Start()
@@ -235,7 +238,7 @@ net.Receive("RoleVote_vote", function(len, ply)
     net.Broadcast()
 end)
 
--- concommands
+-- concommands --
 concommand.Add("rolevote_version", function(ply)
     local msg = {}
     table.insert(msg, Color(255, 255, 255))
