@@ -212,6 +212,14 @@ hook.Add("Initialize", "TTTRolevoteInitialize", function()
     end)
 end)
 
+hook.Add("PlayerDisconnected", "TTTRolevotePlayerDisconnected", function(ply)
+	if not IsValid(ply) or not ply:SteamID64() then return end
+
+	for _, plys in pairs(votes) do
+        table.RemoveByValue(plys, ply:SteamID64())
+    end
+end)
+
 -- networking --
 net.Receive("RoleVote_client_ready", function(len, ply)
     if RoleVote.started then
