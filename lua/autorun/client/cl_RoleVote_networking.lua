@@ -13,6 +13,7 @@ net.Receive("RoleVote_open", function()
 	if ispanel(RoleVote.vgui) then return end
 	RoleVote.voteban = net.ReadBool()
 	RoleVote.voteable = net.ReadTable()
+	RoleVote.end_time = net.ReadInt(32) + CurTime()
 
 	if oldGuiCvar:GetBool() then
 		RoleVote.vgui = vgui.Create("RoleVote_vgui_grid")

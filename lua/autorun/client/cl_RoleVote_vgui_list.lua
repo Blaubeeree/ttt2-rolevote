@@ -1,5 +1,6 @@
 local PANEL = {}
 PANEL.buttons = {}
+local title = "RoleVote"
 
 surface.CreateFont("TTTRoleVote", {
 	font = "DermaDefault",
@@ -22,8 +23,16 @@ function PANEL:Init()
 
 	self:SetSize(width, height)
 	self:Center()
-	self:SetTitle("RoleVote")
+	self:SetTitle(title)
 	self:SetDeleteOnClose(false)
+
+	if (RoleVote.end_time > CurTime()) then
+		function self:Think()
+			local time = math.Round(RoleVote.end_time - CurTime())
+			self:SetTitle(title .. ": " .. time .. " seconds left")
+		end
+	end
+
 	local infoLabel = vgui.Create("DLabelTTT2", self)
 
 	if RoleVote.voteban then

@@ -118,7 +118,15 @@ function RoleVote:Start(time)
 	net.Start("RoleVote_open")
 	net.WriteBool(GetConVar("ttt_rolevote_voteban"):GetBool())
 	net.WriteTable(roles)
+
+	if timer.Exists("RoleVote_VoteTimer") then
+		net.WriteInt(timer.TimeLeft("RoleVote_VoteTimer"), 32)
+	else
+		net.WriteInt(-1, 32)
+	end
+
 	net.Broadcast()
+
 	net.Start("RoleVote_refresh_buttons")
 	net.WriteTable(votes)
 	net.Broadcast()

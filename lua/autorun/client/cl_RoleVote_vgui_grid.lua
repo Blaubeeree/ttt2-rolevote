@@ -16,6 +16,18 @@ function PANEL:Init()
 	self:Center()
 	self:SetTitle("RoleVote")
 	self:SetDeleteOnClose(false)
+
+	if (RoleVote.end_time > CurTime()) then
+		local timeLabel = vgui.Create("DLabel", self)
+		timeLabel:SetFont("Trebuchet24")
+		timeLabel:Dock(TOP)
+
+		function timeLabel:Think()
+			local time = math.Round(RoleVote.end_time - CurTime())
+			self:SetText(time .. " seconds left")
+		end
+	end
+
 	local infoLabel = vgui.Create("DLabel", self)
 
 	if RoleVote.voteban then
@@ -31,13 +43,16 @@ function PANEL:Init()
 	infoLabel:SetFont("Trebuchet24")
 	infoLabel:DockMargin(0, 5, 0, 10)
 	infoLabel:Dock(TOP)
+
 	local scroll = vgui.Create("DScrollPanel", self)
 	scroll:Dock(FILL)
+
 	local container = vgui.Create("DGrid", scroll)
 	container:Dock(FILL)
 	container:SetColWide(button_size)
 	container:SetRowHeight(button_size)
 	container:SetCols(math.floor(width / button_size))
+
 	self:InitButtons(container)
 	self:MakePopup()
 end
