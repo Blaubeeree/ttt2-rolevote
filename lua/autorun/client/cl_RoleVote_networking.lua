@@ -1,8 +1,24 @@
-﻿net.Receive("RoleVote_open", function()
+﻿local oldGuiCvar =
+	CreateClientConVar(
+		"ttt_rolevote_old_gui",
+		"0",
+		true,
+		false,
+		"Enable the old GUI",
+		0,
+		1
+	)
+
+net.Receive("RoleVote_open", function()
 	if ispanel(RoleVote.vgui) then return end
 	RoleVote.voteban = net.ReadBool()
 	RoleVote.voteable = net.ReadTable()
-	RoleVote.vgui = vgui.Create("RoleVote_vgui")
+
+	if oldGuiCvar:GetBool() then
+		RoleVote.vgui = vgui.Create("RoleVote_vgui_grid")
+	else
+		RoleVote.vgui = vgui.Create("RoleVote_vgui_list")
+	end
 end)
 
 net.Receive("RoleVote_close", function()

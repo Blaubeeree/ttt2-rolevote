@@ -134,4 +134,4 @@ function PANEL:UpdateVotes(votes)
 	end
 end
 
-derma.DefineControl("RoleVote_vgui", "", PANEL, "DFrame")
+derma.DefineControl("RoleVote_vgui_grid", "", PANEL, "DFrame")
