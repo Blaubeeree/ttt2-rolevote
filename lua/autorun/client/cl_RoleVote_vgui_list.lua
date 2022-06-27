@@ -14,6 +14,34 @@ surface.CreateFont("TTTRoleVoteLarge", {
 	weight = 1000,
 })
 
+local function bgColorAnimationThink(anim, panel, fraction)
+	if not anim.StartColor then
+		anim.StartColor = panel:GetBGColor()
+	end
+
+	panel:SetBGColor(
+		Color(
+			Lerp(fraction, anim.StartColor.r, anim.Color.r),
+			Lerp(fraction, anim.StartColor.g, anim.Color.g),
+			Lerp(fraction, anim.StartColor.b, anim.Color.b),
+			Lerp(fraction, anim.StartColor.a, anim.Color.a)
+		)
+	)
+end
+
+local function flashButton(button, duration, flashColor)
+	duration = duration / 2 -- half duration because flash consists of two animations
+	local startColor = button:GetBGColor()
+
+	local anim = button:NewAnimation(duration, 0)
+	anim.Color = flashColor
+	anim.Think = bgColorAnimationThink
+
+	local anim2 = button:NewAnimation(duration, duration)
+	anim2.Color = startColor
+	anim2.Think = bgColorAnimationThink
+end
+
 function PANEL:Init()
 	local scale = appearance.GetGlobalScale()
 	local width = scale * 600
@@ -107,6 +135,10 @@ function PANEL:AddButton(container, name, color, iconPath)
 		self:GetParent():OnMouseReleased(keyCode)
 	end
 
+	function votes:GetNumber()
+		return tonumber(self.counter:GetText())
+	end
+
 	function votes:SetNumber(num)
 		self.counter:SetText(num)
 	end
@@ -141,8 +173,8 @@ end
 function PANEL:UpdateVotes(votes)
 	for roleName, players in pairs(votes) do
 		local button = self.buttons[roleName]
-		button.votes:SetNumber(#players)
 
+		-- set tooltip
 		if table.IsEmpty(players) then
 			button.votes:SetTooltipPanelOverride(nil)
 		else
@@ -155,11 +187,20 @@ function PANEL:UpdateVotes(votes)
 			button.votes:SetTooltip(table.concat(plyNames, ", "))
 		end
 
+		-- set background color
 		if table.HasValue(players, LocalPlayer():SteamID64()) then
 			button:SetBGColor(Color(52, 114, 52))
 		else
 			button:SetBGColor(null)
 		end
+
+		-- flash button if a vote was added
+		if #players > button.votes:GetNumber() then
+			flashButton(button, 0.5, Color(30, 144, 255))
+		end
+
+		-- set number fo votes
+		button.votes:SetNumber(#players)
 	end
 end
 
