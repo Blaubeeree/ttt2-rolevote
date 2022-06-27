@@ -55,6 +55,7 @@ function PANEL:Init()
 
 	self:InitButtons(container)
 	self:MakePopup()
+	self:SetKeyboardInputEnabled(false)
 end
 
 function PANEL:InitButtons(container)

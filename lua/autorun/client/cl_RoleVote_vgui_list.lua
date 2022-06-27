@@ -73,6 +73,7 @@ function PANEL:Init()
 	end
 
 	self:MakePopup()
+	self:SetKeyboardInputEnabled(false)
 end
 
 function PANEL:AddButton(container, name, color, iconPath)
