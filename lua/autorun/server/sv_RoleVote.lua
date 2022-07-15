@@ -101,7 +101,7 @@ function RoleVote:Start(time)
 
 	if #roles < 1 then
 		ErrorNoHalt(
-			"[RoleVote] No roles avalible, canceling vote... (this could be because of every role being disabled or on cooldown)\n"
+			"[RoleVote] No roles available, canceling vote... (this could be because of every role being disabled or on cooldown)\n"
 		)
 
 		RoleVote:Cancel()
