@@ -1,11 +1,11 @@
-﻿util.AddNetworkString("RoleVote_open")
+util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_close")
 util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
 util.AddNetworkString("RoleVote_console")
-local version = "26/01/2021"
+local version = "2022/07/15"
 local always_active
 local cooldown
 local votes = {}
