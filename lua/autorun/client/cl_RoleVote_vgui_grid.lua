@@ -31,13 +31,9 @@ function PANEL:Init()
 	local infoLabel = vgui.Create("DLabel", self)
 
 	if RoleVote.voteban then
-		infoLabel:SetText(
-			"Vote for a role that will be deactivated until the next vote:"
-		)
+		infoLabel:SetText("Vote for a role that will be deactivated until the next vote:")
 	else
-		infoLabel:SetText(
-			"Vote for a role that will be activated until the next vote:"
-		)
+		infoLabel:SetText("Vote for a role that will be activated until the next vote:")
 	end
 
 	infoLabel:SetFont("Trebuchet24")
@@ -66,9 +62,7 @@ function PANEL:InitButtons(container)
 		role_button:SetIconSize(button_size)
 		role_button:SetIconColor(roleData.color)
 		role_button.Icon:SetImage2("vgui/ttt/dynamic/icon_base_base")
-		role_button.Icon:SetImageOverlay(
-			"vgui/ttt/dynamic/icon_base_base_overlay"
-		)
+		role_button.Icon:SetImageOverlay("vgui/ttt/dynamic/icon_base_base_overlay")
 		role_button.roleData = roleData
 		role_button.Icon:SetRoleIconImage(roleData.icon)
 		role_button:SetTooltip(LANG.TryTranslation(roleData.name))

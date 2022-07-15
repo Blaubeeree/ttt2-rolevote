@@ -1,13 +1,5 @@
 ﻿local oldGuiCvar =
-	CreateClientConVar(
-		"ttt_rolevote_old_gui",
-		"0",
-		true,
-		false,
-		"Enable the old GUI",
-		0,
-		1
-	)
+	CreateClientConVar("ttt_rolevote_old_gui", "0", true, false, "Enable the old GUI", 0, 1)
 
 net.Receive("RoleVote_open", function()
 	if ispanel(RoleVote.vgui) then return end

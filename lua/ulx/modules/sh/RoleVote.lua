@@ -8,8 +8,7 @@ function ulx.rv_start(calling_ply, duration)
 	end
 end
 
-local rv_start =
-	ulx.command(CATEGORY_NAME, "ulx rv_start", ulx.rv_start, "!rv_start")
+local rv_start = ulx.command(CATEGORY_NAME, "ulx rv_start", ulx.rv_start, "!rv_start")
 
 rv_start:addParam{
 	type = ULib.cmds.NumArg,
@@ -42,7 +41,6 @@ function ulx.rv_cancel(calling_ply)
 	end
 end
 
-local rv_cancel =
-	ulx.command(CATEGORY_NAME, "ulx rv_cancel", ulx.rv_cancel, "!rv_cancel")
+local rv_cancel = ulx.command(CATEGORY_NAME, "ulx rv_cancel", ulx.rv_cancel, "!rv_cancel")
 rv_cancel:defaultAccess(ULib.ACCESS_ADMIN)
 rv_cancel:help("Cancels the current vote (without banning/activating a role)")

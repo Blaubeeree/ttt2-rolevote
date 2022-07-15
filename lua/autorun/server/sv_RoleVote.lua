@@ -1,4 +1,4 @@
-util.AddNetworkString("RoleVote_open")
+﻿util.AddNetworkString("RoleVote_open")
 util.AddNetworkString("RoleVote_close")
 util.AddNetworkString("RoleVote_client_ready")
 util.AddNetworkString("RoleVote_vote")
@@ -30,8 +30,7 @@ end
 reloadCooldown()
 
 local function reloadAlwaysActive()
-	always_active =
-		string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
+	always_active = string.Split(GetConVar("ttt_rolevote_always_active"):GetString(), ",")
 	table.Add(always_active, { INNOCENT.name, TRAITOR.name, DETECTIVE.name })
 
 	for key, role in pairs(always_active) do
@@ -107,9 +106,7 @@ function RoleVote:Start(time)
 
 		RoleVote:Cancel()
 
-		sql.Query(
-			"DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);"
-		)
+		sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
 		reloadCooldown()
 
 		return
@@ -153,10 +150,7 @@ function RoleVote:End()
 			Color(0, 0, 0) or
 			GetRoleByName(winners[i]).color
 		)
-		table.insert(
-			msg,
-			string.SetChar(winners[i], 1, string.upper(winners[i][1]))
-		)
+		table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])))
 
 		if i ~= #winners then
 			table.insert(msg, ", ")
@@ -170,18 +164,12 @@ function RoleVote:End()
 	net.Start("RoleVote_msg")
 	net.WriteTable(msg)
 	net.Broadcast()
-	sql.Query(
-		"INSERT INTO rolevote(roles) VALUES('" .. util.TableToJSON(
-			winners
-		) .. "')"
-	)
+	sql.Query("INSERT INTO rolevote(roles) VALUES('" .. util.TableToJSON(winners) .. "')")
 
-	while (tonumber(
-		sql.Query("SELECT COUNT(*) FROM rolevote")[1]["COUNT(*)"]
-	) > GetConVar("ttt_rolevote_role_cooldown"):GetInt()) do
-		sql.Query(
-			"DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);"
-		)
+	while (tonumber(sql.Query("SELECT COUNT(*) FROM rolevote")[1]["COUNT(*)"]) > GetConVar(
+		"ttt_rolevote_role_cooldown"
+	):GetInt()) do
+		sql.Query("DELETE FROM rolevote WHERE rowid IN (SELECT rowid FROM rolevote LIMIT 1);")
 	end
 
 	reloadCooldown()
@@ -314,14 +302,7 @@ concommand.Add("printRoles", function(ply)
 			then
 				i = i + 1
 				table.insert(tbl, role.color)
-				table.insert(
-					tbl,
-					string.SetChar(
-						role.name,
-						1,
-						string.upper(role.name[1])
-					) .. " \t"
-				)
+				table.insert(tbl, string.SetChar(role.name, 1, string.upper(role.name[1])) .. " \t")
 
 				if string.len(role.name) < 7 then
 					table.insert(tbl, "\t")
@@ -351,14 +332,7 @@ concommand.Add("printRoles", function(ply)
 				Color(0, 0, 0) or
 				GetRoleByName(winners[i]).color
 			)
-			table.insert(
-				msg,
-				string.SetChar(
-					winners[i],
-					1,
-					string.upper(winners[i][1])
-				) .. " \t"
-			)
+			table.insert(msg, string.SetChar(winners[i], 1, string.upper(winners[i][1])) .. " \t")
 
 			if string.len(winners[i]) < 7 then
 				table.insert(msg, "\t")

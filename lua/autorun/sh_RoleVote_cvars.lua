@@ -101,9 +101,7 @@ if SERVER then
 end
 
 if CLIENT then
-	hook.Add("TTTUlxModifyAddonSettings", "TTTRolevoteModifySettings", function(
-	name
-	)
+	hook.Add("TTTUlxModifyAddonSettings", "TTTRolevoteModifySettings", function(name)
 		local tttrspnl = xlib.makelistlayout{
 			w = 415,
 			h = 318,
