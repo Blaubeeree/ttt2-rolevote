@@ -6,14 +6,18 @@ RoleVote is an addon for [TTT2](https://github.com/TTT-2/TTT2) that lets the pla
 
 ```
 - ttt_rolevote_autostart     Enable/Disable autostart after map change
-- ttt_rolevote_min_players   Sets the minimum players that have to be online for RoleVote being active
-                             (Default: 7)
+- ttt_rolevote_min_players   Sets the minimum players that have to be online for RoleVote being active (Default: 7)
 - ttt_rolevote_voteban       0: The players vote the roles that get activated
                              1: The players vote the roles that get banned (Default)
 - ttt_rolevote_count         Sets how many roles will be banned/activated (Default: 1)
-- ttt_rolevote_role_cooldown Sets how many times a role can't be voted on after it has won a vote
-                             (Default: 1)
+- ttt_rolevote_role_cooldown Sets how many times a role can't be voted on after it has won a vote (Default: 1)
 - ttt_rolevote_always_active Always activated roles (separated by "," i.e.: ttt_rolevote_always_active wrath,jester,beacon)
+```
+
+## Client Convars
+
+```
+- ttt_rolevote_old_gui       Enable the old GUI (Default: 0)
 ```
 
 ## Admin Commands
@@ -24,7 +28,7 @@ RoleVote is an addon for [TTT2](https://github.com/TTT-2/TTT2) that lets the pla
 - ulx rv_cancel              Cancels the current vote (without banning/activating a role)
 ```
 
-## Concommands
+## Console Commands
 
 ```
 - rolevote_version           Shows the current version of RoleVote
