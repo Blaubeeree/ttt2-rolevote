@@ -111,7 +111,8 @@ function PANEL:Init()
 			-- filter buttons for val match
 			for _, child in ipairs(buttonContainer:GetChildren()) do
 				-- set visible to val find in name
-				child:SetVisible(string.find(child:GetName(), val))
+				local displayName = LANG.TryTranslation(child:GetName()):lower()
+				child:SetVisible(displayName:find(val:lower()))
 			end
 		else
 			-- val is empty - show all buttons
