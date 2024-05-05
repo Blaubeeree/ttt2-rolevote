@@ -43,6 +43,7 @@ local function flashButton(button, duration, flashColor)
 end
 
 function PANEL:Init()
+	local root = self
 	-- calc a few sizes
 	local scale = appearance.GetGlobalScale()
 	local width = scale * 600
@@ -77,6 +78,23 @@ function PANEL:Init()
 	infoLabel:DockMargin(0, 0, 0, 5)
 	infoLabel:Dock(TOP)
 
+	-- add a search bar
+	local searchBar = vgui.Create("DSearchBarTTT2", self)
+	searchBar:SetFont(self.font)
+	searchBar:SetPlaceholderText("Search for a role...")
+	searchBar:SetCurrentPlaceholderText("Search for a role...")
+	searchBar:Dock(TOP)
+	searchBar:SetHeight(40)
+	searchBar:DockMargin(0, 0, 0, 10)
+
+	function searchBar:OnGetFocus()
+		root:SetKeyboardInputEnabled(true)
+	end
+
+	function searchBar:OnLoseFocus()
+		root:SetKeyboardInputEnabled(false)
+	end
+
 	-- add a scroll panel
 	local scroll = vgui.Create("DScrollPanelTTT2", self)
 	scroll:Dock(FILL)
@@ -84,6 +102,25 @@ function PANEL:Init()
 	-- create a container for the buttons
 	local buttonContainer = vgui.Create("DListLayout", scroll)
 	buttonContainer:Dock(FILL)
+
+	-- searchbar value change listener
+	function searchBar:OnValueChange(val)
+		-- check if val is empty
+		if val ~= "" then
+			-- filter buttons for val match
+			for _, child in ipairs(buttonContainer:GetChildren()) do
+				-- set visible to val find in name
+				child:SetVisible(string.find(child:GetName(), val))
+			end
+		else
+			-- val is empty - show all buttons
+			for _, child in ipairs(buttonContainer:GetChildren()) do
+				child:SetVisible(true)
+			end
+		end
+		-- relayout container
+		buttonContainer:InvalidateLayout(true)
+	end
 
 	-- add a "No Role" button
 	self:AddButton(
