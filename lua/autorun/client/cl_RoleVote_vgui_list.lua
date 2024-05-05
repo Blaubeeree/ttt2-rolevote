@@ -94,15 +94,24 @@ function PANEL:Init()
 		"vgui/ttt/dynamic/roles/icon_disabled"
 	)
 
-	-- add a button for each role
+	-- fetch roles and store as number based table
+	local roles = {}
 	for _, roleData in ipairs(RoleVote.voteable) do
 		roleData = GetRoleByIndex(roleData)
+		table.insert(roles, {name = roleData.name, conVarData = roleData.conVarData, color = roleData.color, icon = roleData.icon})
+	end
+
+	-- sort roles by name (A-Z)
+	table.sort(roles, function(a,b) return a.name < b.name end)
+
+	-- add a button for each role
+	for _, item in pairs(roles) do
 		self:AddButton(
 			buttonContainer,
-			roleData.name,
-			roleData.conVarData,
-			roleData.color,
-			roleData.icon
+			item.name,
+			item.conVarData,
+			item.color,
+			item.icon
 		)
 	end
 
