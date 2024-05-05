@@ -80,6 +80,7 @@ function PANEL:Init()
 
 	-- add a search bar
 	local searchBar = vgui.Create("DSearchBarTTT2", self)
+	searchBar:SetUpdateOnType(true)
 	searchBar:SetFont(self.font)
 	searchBar:SetPlaceholderText("Search for a role...")
 	searchBar:SetCurrentPlaceholderText("Search for a role...")
