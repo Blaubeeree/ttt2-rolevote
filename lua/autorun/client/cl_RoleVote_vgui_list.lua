@@ -66,17 +66,17 @@ function PANEL:Init()
 	end
 
 	-- add a nice little text
-	local infoLabel = vgui.Create("DLabelTTT2", self)
+	local infoLabel = vgui.Create("DLabel", self)
 
 	if RoleVote.voteban then
-		infoLabel:SetText("Vote for a role that will be deactivated until the next vote:")
+		infoLabel:SetText("Vote for a role that will be deactivated until the next vote")
 	else
-		infoLabel:SetText("Vote for a role that will be activated until the next vote:")
+		infoLabel:SetText("Vote for a role that will be activated until the next vote")
 	end
-
 	infoLabel:SetFont(self.font)
 	infoLabel:DockMargin(0, 0, 0, 5)
 	infoLabel:Dock(TOP)
+	infoLabel:SetContentAlignment(5) -- center
 
 	-- add a search bar
 	local searchBar = vgui.Create("DSearchBarTTT2", self)
