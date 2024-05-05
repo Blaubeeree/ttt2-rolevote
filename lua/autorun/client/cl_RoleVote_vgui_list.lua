@@ -43,6 +43,7 @@ local function flashButton(button, duration, flashColor)
 end
 
 function PANEL:Init()
+	local root = self
 	-- calc a few sizes
 	local scale = appearance.GetGlobalScale()
 	local width = scale * 600
@@ -65,17 +66,35 @@ function PANEL:Init()
 	end
 
 	-- add a nice little text
-	local infoLabel = vgui.Create("DLabelTTT2", self)
+	local infoLabel = vgui.Create("DLabel", self)
 
 	if RoleVote.voteban then
-		infoLabel:SetText("Vote for a role that will be deactivated until the next vote:")
+		infoLabel:SetText("Vote for a role that will be deactivated until the next vote")
 	else
-		infoLabel:SetText("Vote for a role that will be activated until the next vote:")
+		infoLabel:SetText("Vote for a role that will be activated until the next vote")
 	end
-
 	infoLabel:SetFont(self.font)
 	infoLabel:DockMargin(0, 0, 0, 5)
 	infoLabel:Dock(TOP)
+	infoLabel:SetContentAlignment(5) -- center
+
+	-- add a search bar
+	local searchBar = vgui.Create("DSearchBarTTT2", self)
+	searchBar:SetUpdateOnType(true)
+	searchBar:SetFont(self.font)
+	searchBar:SetPlaceholderText("Search for a role...")
+	searchBar:SetCurrentPlaceholderText("Search for a role...")
+	searchBar:Dock(TOP)
+	searchBar:SetHeight(40)
+	searchBar:DockMargin(0, 0, 0, 10)
+
+	function searchBar:OnGetFocus()
+		root:SetKeyboardInputEnabled(true)
+	end
+
+	function searchBar:OnLoseFocus()
+		root:SetKeyboardInputEnabled(false)
+	end
 
 	-- add a scroll panel
 	local scroll = vgui.Create("DScrollPanelTTT2", self)
@@ -84,6 +103,26 @@ function PANEL:Init()
 	-- create a container for the buttons
 	local buttonContainer = vgui.Create("DListLayout", scroll)
 	buttonContainer:Dock(FILL)
+
+	-- searchbar value change listener
+	function searchBar:OnValueChange(val)
+		-- check if val is empty
+		if val ~= "" then
+			-- filter buttons for val match
+			for _, child in ipairs(buttonContainer:GetChildren()) do
+				-- set visible to val find in name
+				local displayName = LANG.TryTranslation(child:GetName()):lower()
+				child:SetVisible(displayName:find(val:lower()))
+			end
+		else
+			-- val is empty - show all buttons
+			for _, child in ipairs(buttonContainer:GetChildren()) do
+				child:SetVisible(true)
+			end
+		end
+		-- relayout container
+		buttonContainer:InvalidateLayout(true)
+	end
 
 	-- add a "No Role" button
 	self:AddButton(
@@ -94,15 +133,24 @@ function PANEL:Init()
 		"vgui/ttt/dynamic/roles/icon_disabled"
 	)
 
-	-- add a button for each role
+	-- fetch roles and store as number based table
+	local roles = {}
 	for _, roleData in ipairs(RoleVote.voteable) do
 		roleData = GetRoleByIndex(roleData)
+		table.insert(roles, {name = roleData.name, conVarData = roleData.conVarData, color = roleData.color, icon = roleData.icon})
+	end
+
+	-- sort roles by name (A-Z)
+	table.sort(roles, function(a,b) return a.name < b.name end)
+
+	-- add a button for each role
+	for _, item in pairs(roles) do
 		self:AddButton(
 			buttonContainer,
-			roleData.name,
-			roleData.conVarData,
-			roleData.color,
-			roleData.icon
+			item.name,
+			item.conVarData,
+			item.color,
+			item.icon
 		)
 	end
 
