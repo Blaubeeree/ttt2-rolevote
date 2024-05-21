@@ -125,13 +125,15 @@ function PANEL:Init()
 	end
 
 	-- add a "No Role" button
-	self:AddButton(
-		buttonContainer,
-		"none",
-		nil,
-		Color(0, 0, 0),
-		"vgui/ttt/dynamic/roles/icon_disabled"
-	)
+	if RoleVote.none_option then
+		self:AddButton(
+			buttonContainer,
+			"none",
+			nil,
+			Color(0, 0, 0),
+			"vgui/ttt/dynamic/roles/icon_disabled"
+		)
+	end
 
 	-- fetch roles and store as number based table
 	local roles = {}

@@ -15,6 +15,13 @@ CreateConVar(
 ):GetBool()
 
 CreateConVar(
+	"ttt_rolevote_none_option",
+	1,
+	{ FCVAR_ARCHIVE, FCVAR_NOTIFY },
+	"Enable/Disable the 'No Role' option"
+):GetBool()
+
+CreateConVar(
 	"ttt_rolevote_min_players",
 	7,
 	{ FCVAR_ARCHIVE, FCVAR_NOTIFY },
@@ -58,6 +65,14 @@ hook.Add("TTTUlxInitCustomCVar", "TTTRolevoteInitRWCVar", function(name)
 		"ttt_rolevote_voteban",
 		"rep_ttt_rolevote_voteban",
 		GetConVar("ttt_rolevote_voteban"):GetBool(),
+		true,
+		false,
+		name
+	)
+	ULib.replicatedWritableCvar(
+		"ttt_rolevote_none_option",
+		"rep_ttt_rolevote_none_option",
+		GetConVar("ttt_rolevote_none_option"):GetBool(),
 		true,
 		false,
 		name
@@ -129,6 +144,14 @@ if CLIENT then
 			xlib.makecheckbox{
 				label = "ttt_rolevote_voteban (Def. 1)",
 				repconvar = "rep_ttt_rolevote_voteban",
+				parent = tttrslst,
+			}
+		)
+		
+		tttrslst:AddItem(
+			xlib.makecheckbox{
+				label = "ttt_rolevote_none_option (Def. 1)",
+				repconvar = "rep_ttt_rolevote_none_option",
 				parent = tttrslst,
 			}
 		)

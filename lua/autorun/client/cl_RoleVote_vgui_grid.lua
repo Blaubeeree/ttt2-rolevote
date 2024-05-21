@@ -86,32 +86,34 @@ function PANEL:InitButtons(container)
 		self.buttons[roleData.name] = role_button
 	end
 
-	local none_button = vgui.Create("SimpleRoleIcon", container)
-	none_button:SetIcon("vgui/ttt/dynamic/icon_base")
-	none_button:SetIconSize(button_size)
-	none_button:SetIconColor(Color(0, 0, 0))
-	none_button.Icon:SetImage2("vgui/ttt/dynamic/icon_base_base")
-	none_button.Icon:SetImageOverlay("vgui/ttt/dynamic/icon_base_base_overlay")
-	none_button.Icon:SetRoleIconImage("vgui/ttt/dynamic/roles/icon_disabled")
-	none_button:SetTooltip(LANG.TryTranslation("none"))
-	none_button:SetName("none")
+	if RoleVote.none_option then
+		local none_button = vgui.Create("SimpleRoleIcon", container)
+		none_button:SetIcon("vgui/ttt/dynamic/icon_base")
+		none_button:SetIconSize(button_size)
+		none_button:SetIconColor(Color(0, 0, 0))
+		none_button.Icon:SetImage2("vgui/ttt/dynamic/icon_base_base")
+		none_button.Icon:SetImageOverlay("vgui/ttt/dynamic/icon_base_base_overlay")
+		none_button.Icon:SetRoleIconImage("vgui/ttt/dynamic/roles/icon_disabled")
+		none_button:SetTooltip(LANG.TryTranslation("none"))
+		none_button:SetName("none")
 
-	function none_button:OnMousePressed(keyCode)
-		if keyCode == MOUSE_LEFT then
-			net.Start("RoleVote_vote")
-			net.WriteString(self:GetName())
-			net.SendToServer()
+		function none_button:OnMousePressed(keyCode)
+			if keyCode == MOUSE_LEFT then
+				net.Start("RoleVote_vote")
+				net.WriteString(self:GetName())
+				net.SendToServer()
+			end
 		end
-	end
 
-	none_button.grid = vgui.Create("DGrid", none_button)
-	none_button.grid:SetPos(5, 5)
-	none_button.grid:SetSize(button_size - 10, button_size - 10)
-	none_button.grid:SetColWide(avatar_size)
-	none_button.grid:SetRowHeight(avatar_size)
-	none_button.grid:SetCols(math.floor(button_size / avatar_size))
-	container:AddItem(none_button)
-	self.buttons["none"] = none_button
+		none_button.grid = vgui.Create("DGrid", none_button)
+		none_button.grid:SetPos(5, 5)
+		none_button.grid:SetSize(button_size - 10, button_size - 10)
+		none_button.grid:SetColWide(avatar_size)
+		none_button.grid:SetRowHeight(avatar_size)
+		none_button.grid:SetCols(math.floor(button_size / avatar_size))
+		container:AddItem(none_button)
+		self.buttons["none"] = none_button
+	end
 end
 
 function PANEL:UpdateVotes(votes)

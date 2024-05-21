@@ -4,6 +4,7 @@
 net.Receive("RoleVote_open", function()
 	if ispanel(RoleVote.vgui) then return end
 	RoleVote.voteban = net.ReadBool()
+	RoleVote.none_option = net.ReadBool()
 	RoleVote.voteable = net.ReadTable()
 	RoleVote.end_time = net.ReadInt(32) + CurTime()
 

@@ -5,7 +5,7 @@ util.AddNetworkString("RoleVote_vote")
 util.AddNetworkString("RoleVote_refresh_buttons")
 util.AddNetworkString("RoleVote_msg")
 util.AddNetworkString("RoleVote_console")
-local version = "2024/05/05"
+local version = "2024/05/21"
 local always_active
 local cooldown
 local votes = {}
@@ -114,6 +114,7 @@ function RoleVote:Start(time)
 
 	net.Start("RoleVote_open")
 	net.WriteBool(GetConVar("ttt_rolevote_voteban"):GetBool())
+	net.WriteBool(GetConVar("ttt_rolevote_none_option"):GetBool())
 	net.WriteTable(roles)
 
 	if timer.Exists("RoleVote_VoteTimer") then
